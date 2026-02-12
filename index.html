@@ -46,8 +46,8 @@
 
     <div class="controls">
         <div class="search-row">
-            <div style="position: relative; flex: 1;">
-                <input type="text" id="searchInput" placeholder="Search title, keyword, or city..." oninput="filterJobs">
+            <div style="position: relative; flex: 1; display: flex;">
+                <input type="text" id="searchInput" placeholder="Search title, keyword, or city..." oninput="handleSearchInput()">
                 <span id="clearSearch" onclick="clearSearchInput()" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; font-weight: bold; font-size: 1.2rem;">&times;</span>
             </div>
         </div>
