@@ -1,4 +1,4 @@
-# UC Jobs
+# [UC Jobs](https://ven-mey.github.io/uc-jobs-app/)
 A simple web page that contains jobs scraped from the [University of California jobs website](https://jobs.universityofcalifornia.edu/site). 
 
 There are some notable quality of life improvements:
