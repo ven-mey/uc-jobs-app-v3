@@ -3,63 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UC Jobs</title>
-    <style>
+    <title>UC Jobs</title> <style>
         body { font-family: -apple-system, system-ui, sans-serif; background: #f4f7f6; max-width: 1000px; margin: 0 auto; padding: 2rem; color: #333; }
-        header { text-align: center; margin-bottom: 2rem; }
-        h1 { color: #005596; margin-bottom: 0.5rem; }
-        .subtitle { color: #666; font-size: 1.1rem; margin-bottom: 0.5rem; }
+        header { text-align: center; margin-bottom: 1rem; }
+        h1 { color: #005596; margin-bottom: 5px; } /* Updated Heading */
         .last-scraped-header { font-size: 0.85rem; color: #888; margin-bottom: 1.5rem; font-style: italic; }
         
-        .stats-bar { font-size: 0.9rem; color: #666; margin-bottom: 1rem; font-weight: 600; }
-        .controls { background: white; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+        .stats-bar { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #666; margin-bottom: 1rem; font-weight: 600; }
         
-        .search-row { display: flex; gap: 10px; margin-bottom: 1rem; }
-        input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 4px; font-size: 1rem; }
-        .btn-refresh { background: #005596; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        /* Collapsible Filter Area */
+        .controls-wrapper { background: white; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 2rem; overflow: hidden; }
+        .filter-header { background: #f8f9fa; padding: 12px 20px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #eee; }
+        .filter-content { padding: 20px; display: block; }
+        .filter-content.hidden { display: none; }
 
-        .filter-section { margin-top: 15px; padding-top: 10px; border-top: 1px solid #eee; }
-        .filter-label { font-size: 0.8rem; font-weight: bold; color: #555; margin-bottom: 8px; display: block; text-transform: uppercase; }
-        
-        .chip-container { display: flex; flex-wrap: wrap; gap: 8px; }
-        .chip { font-size: 0.7rem; background: #f0f0f0; padding: 5px 12px; border-radius: 20px; cursor: pointer; border: 1px solid #ddd; transition: 0.2s; font-weight: 500; }
+        .search-row { display: flex; gap: 10px; margin-bottom: 1.5rem; }
+        .input-container { position: relative; flex: 1; }
+        input[type="text"] { width: 100%; padding: 12px 40px 12px 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 1rem; }
+        #clearSearch { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #ccc; display: none; font-size: 1.5rem; line-height: 1; }
+
+        /* Filter Chips */
+        .filter-section { margin-bottom: 15px; }
+        .filter-label { font-size: 0.75rem; font-weight: bold; color: #777; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+        .chip-container { display: flex; flex-wrap: wrap; gap: 6px; }
+        .chip { font-size: 0.7rem; background: #f0f0f0; padding: 6px 14px; border-radius: 20px; cursor: pointer; border: 1px solid #ddd; white-space: nowrap; transition: 0.2s; }
         .chip.active { background: #005596; color: white; border-color: #005596; }
+        .chip.special { border: 1px dashed #005596; color: #005596; font-weight: bold; }
+        .chip.special.active { background: #005596; color: white; border-style: solid; }
 
-        #app { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-        .job-card { background: white; padding: 1.5rem; border-radius: 6px; border: 1px solid #eee; text-decoration: none; color: inherit; display: block; transition: 0.2s; }
-        .job-card:hover { border-color: #005596; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .job-title { font-weight: bold; color: #005596; margin-bottom: 6px; font-size: 1.15rem; }
-        .job-meta { display: flex; justify-content: space-between; font-size: 0.85rem; color: #666; margin-bottom: 12px; }
-        .job-category { display: inline-block; background: #e1e8ed; color: #005596; padding: 4px 10px; border-radius: 4px; font-size: 0.7rem; font-weight: 700; text-transform: uppercase; }
+        /* Job Cards */
+        .job-card { background: white; padding: 1.5rem; border-radius: 8px; border: 1px solid #eee; text-decoration: none; color: inherit; display: block; position: relative; margin-bottom: 12px; transition: 0.2s; }
+        .job-card:hover { border-color: #005596; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .job-title { font-weight: bold; color: #005596; font-size: 1.15rem; padding-right: 45px; line-height: 1.3; }
+        
+        /* Badges & Favorite Icon */
+        .favorite-btn { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.6rem; cursor: pointer; color: #eee; transition: 0.2s; z-index: 10; user-select: none; }
+        .favorite-btn.active { color: #f1c40f; }
+        .new-badge { background: #27ae60; color: white; font-size: 0.65rem; padding: 2px 6px; border-radius: 3px; font-weight: bold; margin-left: 8px; vertical-align: middle; }
+        
+        .btn-reset { background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 0.8rem; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>UC Jobs</h1>
-        <div id="lastUpdatedHeader" class="last-scraped-header">Loading timestamp...</div>
+        <h1>UC Jobs</h1> <div id="lastUpdatedHeader" class="last-scraped-header">Loading...</div>
     </header>
 
     <div class="stats-bar">
-        Showing <span id="currentCount">0</span> of <span id="totalCount">0</span> total jobs
-    </div>
+        <div>Showing <span id="currentCount">0</span> of <span id="totalCount">0</span> jobs</div>
+        <button class="btn-reset" onclick="resetAllFilters()">Clear All Filters</button> </div>
 
-    <div class="controls">
-        <div class="search-row">
-            <div style="position: relative; flex: 1; display: flex;">
-                <input type="text" id="searchInput" placeholder="Search title, keyword, or city..." oninput="handleSearchInput()">
-                <span id="clearSearch" onclick="clearSearchInput()" style="display: none; position: absolute; right: 10px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #999; font-weight: bold; font-size: 1.2rem;">&times;</span>
+    <div class="controls-wrapper">
+        <div class="filter-header" onclick="toggleFilters()"> <strong>Search & Filters</strong>
+            <span id="toggleIcon">▼</span>
+        </div>
+        <div id="filterContent" class="filter-content">
+            <div class="search-row">
+                <div class="input-container">
+                    <input type="text" id="searchInput" placeholder="Search keywords..." oninput="handleSearch()">
+                    <span id="clearSearch" onclick="clearSearchInput()">&times;</span> </div>
             </div>
-        </div>
-        
-        <div class="filter-section">
-            <span class="filter-label">Filter by Location:</span>
-            <div id="locationChips" class="chip-container"></div>
-        </div>
 
-        <div class="filter-section">
-            <span class="filter-label">Filter by Category:</span>
-            <div id="categoryChips" class="chip-container"></div>
+            <div class="filter-section">
+                <span class="filter-label">Quick Views</span>
+                <div class="chip-container">
+                    <div id="filterFavs" class="chip special" onclick="toggleSpecialFilter('favs')">★ Favorites</div> <div id="filterNew" class="chip special" onclick="toggleSpecialFilter('new')">✨ New Since Last Visit</div> </div>
+            </div>
+
+            <div class="filter-section">
+                <span class="filter-label">Locations</span>
+                <div id="locationChips" class="chip-container"></div>
+            </div>
+
+            <div class="filter-section">
+                <span class="filter-label">Categories</span>
+                <div id="categoryChips" class="chip-container"></div>
+            </div>
         </div>
     </div>
 
@@ -69,38 +89,42 @@
         let allJobs = [];
         let selectedLocations = new Set();
         let selectedCategories = new Set();
+        let showOnlyFavs = false;
+        let showOnlyNew = false;
+        
+        // Favorite and Visit logic using LocalStorage
+        let favorites = new Set(JSON.parse(localStorage.getItem('uc_favorites') || '[]'));
+        let lastVisit = parseInt(localStorage.getItem('uc_last_visit') || Date.now());
 
-        function getTimeAgo(dateString) {
-            const diff = new Date() - new Date(dateString);
-            const mins = Math.floor(diff / 60000);
-            if (mins < 1) return "just now";
-            if (mins < 60) return `${mins}m ago`;
-            const hours = Math.floor(mins / 60);
-            if (hours < 24) return `${hours}h ago`;
-            return new Date(dateString).toLocaleDateString();
+        function toggleFilters() {
+            const content = document.getElementById('filterContent');
+            const icon = document.getElementById('toggleIcon');
+            content.classList.toggle('hidden');
+            icon.textContent = content.classList.contains('hidden') ? '▲' : '▼';
         }
 
         async function loadJobs() {
-            const app = document.getElementById('app');
-            app.innerHTML = '<div style="text-align:center">Loading data...</div>';
             try {
                 const res = await fetch('jobs.json?v=' + Date.now());
                 const data = await res.json();
                 allJobs = data.results || [];
                 
                 document.getElementById('totalCount').textContent = allJobs.length;
-                document.getElementById('lastUpdatedHeader').textContent = `Scraper last ran: ${getTimeAgo(data.updated_at)} (${new Date(data.updated_at).toLocaleString()})`;
+                document.getElementById('lastUpdatedHeader').textContent = `Checked: ${new Date(data.updated_at).toLocaleString()}`;
                 
                 generateChips('locationChips', 'location', selectedLocations);
                 generateChips('categoryChips', 'category', selectedCategories);
+                
                 filterJobs();
-            } catch (e) { app.innerHTML = 'Error loading data.'; }
+                
+                // Track visit time
+                localStorage.setItem('uc_last_visit', Date.now().toString());
+            } catch (e) { console.error(e); }
         }
 
         function generateChips(containerId, field, selectionSet) {
             const container = document.getElementById(containerId);
             const items = [...new Set(allJobs.map(j => j[field] || 'N/A'))].sort();
-            
             container.innerHTML = items.map(item => `
                 <div class="chip ${selectionSet.has(item) ? 'active' : ''}" 
                      onclick="toggleChip('${item}', '${containerId}', this)">${item}</div>
@@ -108,53 +132,90 @@
         }
 
         function toggleChip(value, containerId, el) {
-            const selectionSet = containerId === 'locationChips' ? selectedLocations : selectedCategories;
-            if (selectionSet.has(value)) {
-                selectionSet.delete(value);
-                el.classList.remove('active');
+            const set = containerId === 'locationChips' ? selectedLocations : selectedCategories;
+            set.has(value) ? set.delete(value) : set.add(value);
+            el.classList.toggle('active');
+            filterJobs();
+        }
+
+        function toggleSpecialFilter(type) {
+            if (type === 'favs') {
+                showOnlyFavs = !showOnlyFavs;
+                document.getElementById('filterFavs').classList.toggle('active');
             } else {
-                selectionSet.add(value);
-                el.classList.add('active');
+                showOnlyNew = !showOnlyNew;
+                document.getElementById('filterNew').classList.toggle('active');
             }
             filterJobs();
         }
 
-        // Function to show/hide the X based on text input
-        function handleSearchInput() {
-            const input = document.getElementById('searchInput');
-            const clearBtn = document.getElementById('clearSearch');
-            
-            clearBtn.style.display = input.value.length > 0 ? 'block' : 'none';
+        function toggleFavorite(url, event) {
+            event.preventDefault(); // Mark Favorite
+            favorites.has(url) ? favorites.delete(url) : favorites.add(url);
+            localStorage.setItem('uc_favorites', JSON.stringify([...favorites]));
             filterJobs();
         }
-        
-        // Function to clear the input and reset the list
-        function clearSearchInput() {
-            const input = document.getElementById('searchInput');
-            input.value = '';
+
+        function resetAllFilters() {
+            selectedLocations.clear();
+            selectedCategories.clear();
+            showOnlyFavs = false;
+            showOnlyNew = false;
+            document.getElementById('searchInput').value = '';
             document.getElementById('clearSearch').style.display = 'none';
-            filterJobs(); // Refresh the list to show all results
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            filterJobs();
+        }
+
+        function handleSearch() {
+            const val = document.getElementById('searchInput').value;
+            document.getElementById('clearSearch').style.display = val ? 'block' : 'none';
+            filterJobs();
+        }
+
+        function clearSearchInput() {
+            document.getElementById('searchInput').value = '';
+            handleSearch();
         }
 
         function filterJobs() {
             const query = document.getElementById('searchInput').value.toLowerCase();
-            const app = document.getElementById('app');
-
             const filtered = allJobs.filter(j => {
-                const matchesSearch = `${j.title} ${j.location} ${j.category || ''}`.toLowerCase().includes(query);
-                const matchesLocation = selectedLocations.size === 0 || selectedLocations.has(j.location);
-                const matchesCategory = selectedCategories.size === 0 || selectedCategories.has(j.category || 'N/A');
-                return matchesSearch && matchesLocation && matchesCategory;
+                const searchable = `${j.title} ${j.location} ${j.category || ''}`.toLowerCase();
+                const matchesSearch = searchable.includes(query);
+                const matchesLoc = selectedLocations.size === 0 || selectedLocations.has(j.location);
+                const matchesCat = selectedCategories.size === 0 || selectedCategories.has(j.category || 'N/A');
+                const matchesFav = !showOnlyFavs || favorites.has(j.url);
+                const jobTime = j.scraped_at ? new Date(j.scraped_at).getTime() : 0;
+                const matchesNew = !showOnlyNew || jobTime > lastVisit; // Filter new since visit
+
+                return matchesSearch && matchesLoc && matchesCat && matchesFav && matchesNew;
             });
 
             document.getElementById('currentCount').textContent = filtered.length;
-            app.innerHTML = filtered.map(j => `
-                <a href="${j.url}" target="_blank" class="job-card">
-                    <div class="job-title">${j.title}</div>
-                    <div class="job-meta"><span>📍 ${j.location}</span><span>📅 ${j.date}</span></div>
-                    <div class="job-category">${j.category || 'N/A'}</div>
-                </a>
-            `).join('');
+            renderJobs(filtered);
+        }
+
+        function renderJobs(jobs) {
+            const app = document.getElementById('app');
+            app.innerHTML = jobs.map(j => {
+                const isFav = favorites.has(j.url);
+                const jobTime = j.scraped_at ? new Date(j.scraped_at).getTime() : 0;
+                const isNew = jobTime > lastVisit; // Indicate new jobs
+
+                return `
+                <div class="job-card">
+                    <span class="favorite-btn ${isFav ? 'active' : ''}" onclick="toggleFavorite('${j.url}', event)">★</span>
+                    <a href="${j.url}" target="_blank" style="text-decoration:none; color:inherit;">
+                        <div class="job-title">${j.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</div>
+                        <div class="job-meta">
+                            <span>📍 ${j.location}</span>
+                            <span>📅 ${j.date}</span>
+                        </div>
+                        <div class="job-category">${j.category || 'N/A'}</div>
+                    </a>
+                </div>`;
+            }).join('');
         }
 
         loadJobs();
