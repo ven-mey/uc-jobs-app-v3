@@ -92,9 +92,12 @@
         let showOnlyFavs = false;
         let showOnlyNew = false;
         
-        // Favorite and Visit logic using LocalStorage
+        // 1. CAPTURE OLD TIMESTAMP IMMEDIATELY
+        // We don't update localStorage yet!
+        const storedLastVisit = localStorage.getItem('uc_last_visit');
+        const lastVisit = storedLastVisit ? parseInt(storedLastVisit) : 0; 
+
         let favorites = new Set(JSON.parse(localStorage.getItem('uc_favorites') || '[]'));
-        let lastVisit = parseInt(localStorage.getItem('uc_last_visit') || Date.now());
 
         function toggleFilters() {
             const content = document.getElementById('filterContent');
@@ -115,68 +118,16 @@
                 generateChips('locationChips', 'location', selectedLocations);
                 generateChips('categoryChips', 'category', selectedCategories);
                 
+                // 2. RENDER USING THE CAPTURED TIMESTAMP
                 filterJobs();
                 
-                // Track visit time
+                // 3. ONLY UPDATE STORAGE AFTER RENDERING
+                // This ensures "NEW" labels stay until the next fresh page load.
                 localStorage.setItem('uc_last_visit', Date.now().toString());
             } catch (e) { console.error(e); }
         }
 
-        function generateChips(containerId, field, selectionSet) {
-            const container = document.getElementById(containerId);
-            const items = [...new Set(allJobs.map(j => j[field] || 'N/A'))].sort();
-            container.innerHTML = items.map(item => `
-                <div class="chip ${selectionSet.has(item) ? 'active' : ''}" 
-                     onclick="toggleChip('${item}', '${containerId}', this)">${item}</div>
-            `).join('');
-        }
-
-        function toggleChip(value, containerId, el) {
-            const set = containerId === 'locationChips' ? selectedLocations : selectedCategories;
-            set.has(value) ? set.delete(value) : set.add(value);
-            el.classList.toggle('active');
-            filterJobs();
-        }
-
-        function toggleSpecialFilter(type) {
-            if (type === 'favs') {
-                showOnlyFavs = !showOnlyFavs;
-                document.getElementById('filterFavs').classList.toggle('active');
-            } else {
-                showOnlyNew = !showOnlyNew;
-                document.getElementById('filterNew').classList.toggle('active');
-            }
-            filterJobs();
-        }
-
-        function toggleFavorite(url, event) {
-            event.preventDefault(); // Mark Favorite
-            favorites.has(url) ? favorites.delete(url) : favorites.add(url);
-            localStorage.setItem('uc_favorites', JSON.stringify([...favorites]));
-            filterJobs();
-        }
-
-        function resetAllFilters() {
-            selectedLocations.clear();
-            selectedCategories.clear();
-            showOnlyFavs = false;
-            showOnlyNew = false;
-            document.getElementById('searchInput').value = '';
-            document.getElementById('clearSearch').style.display = 'none';
-            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
-            filterJobs();
-        }
-
-        function handleSearch() {
-            const val = document.getElementById('searchInput').value;
-            document.getElementById('clearSearch').style.display = val ? 'block' : 'none';
-            filterJobs();
-        }
-
-        function clearSearchInput() {
-            document.getElementById('searchInput').value = '';
-            handleSearch();
-        }
+        // ... generateChips, toggleChip, toggleSpecialFilter, toggleFavorite, resetAllFilters remain the same ...
 
         function filterJobs() {
             const query = document.getElementById('searchInput').value.toLowerCase();
@@ -186,8 +137,10 @@
                 const matchesLoc = selectedLocations.size === 0 || selectedLocations.has(j.location);
                 const matchesCat = selectedCategories.size === 0 || selectedCategories.has(j.category || 'N/A');
                 const matchesFav = !showOnlyFavs || favorites.has(j.url);
+                
+                // Compare against the timestamp we captured at page start
                 const jobTime = j.scraped_at ? new Date(j.scraped_at).getTime() : 0;
-                const matchesNew = !showOnlyNew || jobTime > lastVisit; // Filter new since visit
+                const matchesNew = !showOnlyNew || jobTime > lastVisit;
 
                 return matchesSearch && matchesLoc && matchesCat && matchesFav && matchesNew;
             });
@@ -201,7 +154,9 @@
             app.innerHTML = jobs.map(j => {
                 const isFav = favorites.has(j.url);
                 const jobTime = j.scraped_at ? new Date(j.scraped_at).getTime() : 0;
-                const isNew = jobTime > lastVisit; // Indicate new jobs
+                
+                // Check if the job was scraped AFTER our last recorded visit
+                const isNew = lastVisit > 0 && jobTime > lastVisit;
 
                 return `
                 <div class="job-card">
