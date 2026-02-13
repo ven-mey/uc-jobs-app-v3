@@ -93,10 +93,11 @@
 
     <script>
         let allJobs = [];
-        let selectedLocations = new Set();
-        let selectedCategories = new Set();
-        let showOnlyFavs = false;
-        let showOnlyNew = false;
+        let selectedLocations = new Set(JSON.parse(localStorage.getItem('uc_selected_locs') || '[]'));
+        let selectedCategories = new Set(JSON.parse(localStorage.getItem('uc_selected_cats') || '[]'));
+        let savedSearch = localStorage.getItem('uc_search_query') || '';
+        let showOnlyFavs = localStorage.getItem('uc_show_only_favs') === 'true';
+        let showOnlyNew = localStorage.getItem('uc_show_only_new') === 'true';
         
         const storedLastVisit = localStorage.getItem('uc_last_visit');
         const lastVisit = storedLastVisit ? parseInt(storedLastVisit) : 0; 
@@ -116,12 +117,27 @@
                 const data = await res.json();
                 allJobs = data.results || [];
                 
+                // Populate the search input with the saved term
+                const searchInput = document.getElementById('searchInput');
+                searchInput.value = savedSearch;
+                document.getElementById('clearSearch').style.display = savedSearch ? 'block' : 'none';
+        
                 document.getElementById('totalCount').textContent = allJobs.length;
                 document.getElementById('lastUpdatedHeader').textContent = `Checked: ${new Date(data.updated_at).toLocaleString()}`;
                 
                 generateChips('locationChips', 'location', selectedLocations);
                 generateChips('categoryChips', 'category', selectedCategories);
                 
+                // Set active state for Quick View chips based on storage
+                if (showOnlyFavs) document.getElementById('filterFavs').classList.add('active');
+                if (showOnlyNew) document.getElementById('filterNew').classList.add('active');
+            
+                // Update auto-expand logic to include these booleans
+                if (selectedLocations.size > 0 || selectedCategories.size > 0 || savedSearch || showOnlyFavs || showOnlyNew) {
+                    document.getElementById('filterContent').classList.remove('hidden');
+                    document.getElementById('toggleIcon').textContent = '▼';
+                }
+
                 filterJobs();
                 
                 localStorage.setItem('uc_last_visit', Date.now().toString());
@@ -147,9 +163,11 @@
         function toggleSpecialFilter(type) {
             if (type === 'favs') {
                 showOnlyFavs = !showOnlyFavs;
+                localStorage.setItem('uc_show_only_favs', showOnlyFavs); // Save state
                 document.getElementById('filterFavs').classList.toggle('active');
             } else if (type === 'new') {
                 showOnlyNew = !showOnlyNew;
+                localStorage.setItem('uc_show_only_new', showOnlyNew); // Save state
                 document.getElementById('filterNew').classList.toggle('active');
             }
             filterJobs();
@@ -167,15 +185,33 @@
             selectedCategories.clear();
             showOnlyFavs = false;
             showOnlyNew = false;
+            
+            // Wipe all storage keys
+            localStorage.removeItem('uc_selected_locs');
+            localStorage.removeItem('uc_selected_cats');
+            localStorage.removeItem('uc_search_query');
+
+            // Clear the Quick View storage
+            localStorage.removeItem('uc_show_only_favs');
+            localStorage.removeItem('uc_show_only_new');
+
+            // Remove active classes from chips
+            document.getElementById('filterFavs').classList.remove('active');
+            document.getElementById('filterNew').classList.remove('active');
+            
             document.getElementById('searchInput').value = '';
             document.getElementById('clearSearch').style.display = 'none';
             document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            
             filterJobs();
         }
 
         function handleSearch() {
             const val = document.getElementById('searchInput').value;
             document.getElementById('clearSearch').style.display = val ? 'block' : 'none';
+            
+            // Save keyword to local storage
+            localStorage.setItem('uc_search_query', val);
             filterJobs();
         }
 
