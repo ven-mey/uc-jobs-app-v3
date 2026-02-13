@@ -192,7 +192,7 @@
                 const matchesCat = selectedCategories.size === 0 || selectedCategories.has(j.category || 'N/A');
                 const matchesFav = !showOnlyFavs || favorites.has(j.url);
                 
-                const jobTime = j.scraped_at ? new Date(j.scraped_at).getTime() : 0;
+                const jobTime = j.scraped_at ? new Date(j.scraped_at).getTime() : new Date(j.date).getTime();
                 const matchesNew = !showOnlyNew || (lastVisit > 0 && jobTime > lastVisit);
 
                 return matchesSearch && matchesLoc && matchesCat && matchesFav && matchesNew;
@@ -206,7 +206,7 @@
             const app = document.getElementById('app');
             app.innerHTML = jobs.map(j => {
                 const isFav = favorites.has(j.url);
-                const jobTime = j.scraped_at ? new Date(j.scraped_at).getTime() : 0;
+                const jobTime = j.scraped_at ? new Date(j.scraped_at).getTime() : new Date(j.date).getTime();
                 const isNew = lastVisit > 0 && jobTime > lastVisit;
 
                 return `
