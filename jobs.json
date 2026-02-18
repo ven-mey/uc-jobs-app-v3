@@ -1,7 +1,87 @@
 {
-  "updated_at": "2026-02-18T08:02:32.374Z",
-  "count": 1217,
+  "updated_at": "2026-02-18T14:36:24.171Z",
+  "count": 1227,
   "results": [
+    {
+      "title": "Director, Imaging IT Innovation",
+      "location": "San Francisco",
+      "category": "N/A",
+      "date": "2/18/2026",
+      "url": "https://sjobs.brassring.com/TGnewUI/Search/home/HomeWithPreLoad?PageType=JobDetails&partnerid=6495&siteid=5861&jobid=3712479",
+      "scraped_at": "2026-02-18T14:36:22.857Z"
+    },
+    {
+      "title": "Medical Assistant 3",
+      "location": "San Francisco Medical Center",
+      "category": "Support Services",
+      "date": "2/18/2026",
+      "url": "https://sjobs.brassring.com/TGnewUI/Search/home/HomeWithPreLoad?PageType=JobDetails&partnerid=6495&siteid=5861&jobid=3709755",
+      "scraped_at": "2026-02-18T14:36:22.858Z"
+    },
+    {
+      "title": "MRI Research Technologist",
+      "location": "San Francisco",
+      "category": "Clinical Health Services",
+      "date": "2/18/2026",
+      "url": "https://sjobs.brassring.com/TGnewUI/Search/home/HomeWithPreLoad?PageType=JobDetails&partnerid=6495&siteid=5861&jobid=3712478",
+      "scraped_at": "2026-02-18T14:36:22.859Z"
+    },
+    {
+      "title": "Research Assistant",
+      "location": "San Francisco",
+      "category": "General Administration",
+      "date": "2/18/2026",
+      "url": "https://sjobs.brassring.com/TGnewUI/Search/home/HomeWithPreLoad?PageType=JobDetails&partnerid=6495&siteid=5861&jobid=3712454",
+      "scraped_at": "2026-02-18T14:36:22.859Z"
+    },
+    {
+      "title": "(RN) Assistant Nurse Manager - IR",
+      "location": "San Diego Health System",
+      "category": "Nursing",
+      "date": "2/17/2026",
+      "url": "http://jobs.ucsd.edu/bulletin/job.aspx?jobnum_in=138515",
+      "scraped_at": "2026-02-18T14:36:22.860Z"
+    },
+    {
+      "title": "(RN) Assistant Nurse Manager - IR and Cath Lab",
+      "location": "San Diego Health System",
+      "category": "Nursing",
+      "date": "2/17/2026",
+      "url": "http://jobs.ucsd.edu/bulletin/job.aspx?jobnum_in=138516",
+      "scraped_at": "2026-02-18T14:36:22.860Z"
+    },
+    {
+      "title": "48X Administrative Nurse Service Line Support RN - Forgut, Metabolic, General, Bariatric, Surgonc, C",
+      "location": "Davis Health System",
+      "category": "Nursing",
+      "date": "2/17/2026",
+      "url": "https://careerspub.universityofcalifornia.edu/psc/ucdmed/EMPLOYEE/HRMS/c/HRS_HRAM_FL.HRS_CG_SEARCH_FL.GBL?Page=HRS_APP_JBPST_FL&JobOpeningId=83796&PostingSeq=1&SiteId=5&languageCd=ENG&FOCUS=Applicant",
+      "scraped_at": "2026-02-18T14:36:22.861Z"
+    },
+    {
+      "title": "Administrative Assistant II - Dermatology (Pasadena)",
+      "location": "Los Angeles Medical Center",
+      "category": "General Administration",
+      "date": "2/17/2026",
+      "url": "https://uclahealth.avature.net/careers/JobDetail/28920",
+      "scraped_at": "2026-02-18T14:36:22.861Z"
+    },
+    {
+      "title": "Administrative Assistant II - Dermatology (Pasadena)",
+      "location": "Los Angeles Medical Center",
+      "category": "General Administration",
+      "date": "2/17/2026",
+      "url": "https://uclahealth.avature.net/careers/JobDetail/28921",
+      "scraped_at": "2026-02-18T14:36:22.862Z"
+    },
+    {
+      "title": "Administrative Officer",
+      "location": "Los Angeles",
+      "category": "General Administration",
+      "date": "2/17/2026",
+      "url": "https://jobs.ucla.edu/jobs/9817",
+      "scraped_at": "2026-02-18T14:36:22.862Z"
+    },
     {
       "title": "Data Systems Management",
       "location": "San Francisco",
